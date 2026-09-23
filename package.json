@@ -1,17 +1,20 @@
 {
-  "name": "sites-project",
+  "name": "my-twenties-workspace",
   "version": "0.1.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
   },
   "scripts": {
-    "dev": "vinext dev",
-    "build": "vinext build",
+    "dev": "vite --config vite.pages.config.ts",
+    "build": "vite build --config vite.pages.config.ts",
     "start": "wrangler dev --config dist/server/wrangler.json",
     "lint": "oxlint",
     "format": "oxfmt",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "preview": "vite preview --config vite.pages.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/local-records.test.ts"
   },
   "dependencies": {
     "react": "19.2.6",

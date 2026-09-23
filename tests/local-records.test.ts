@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {parseBackup,readSnapshot,writeSnapshot} from '../lib/local-records.ts';
+import type {RecordItem} from '../lib/local-records.ts';
+const seed:RecordItem[]=[{id:'TASK-1',kind:'task',title:'测试任务',body:'验收工作流程',category:'核心循环',evidence:'整理建议',source:'测试',priority:'P0',status:'待办',owner:'',due:'',updatedAt:'2026-09-23T00:00:00Z'}];
+function memory(){const map=new Map<string,string>();return{getItem:(k:string)=>map.get(k)??null,setItem:(k:string,v:string)=>{map.set(k,v)}}}
+test('saved edits survive reopening and deployment seed changes',()=>{const storage=memory();writeSnapshot(storage,'test',seed,[{...seed[0],title:'已编辑'}],0);assert.equal(readSnapshot(storage,'test',[{...seed[0],title:'新版种子'}]).records[0].title,'已编辑');});
+test('stale tabs cannot overwrite newer edits',()=>{const storage=memory();writeSnapshot(storage,'test',seed,[{...seed[0],title:'新修改'}],0);assert.throws(()=>writeSnapshot(storage,'test',seed,seed,0),/其他窗口/);assert.equal(readSnapshot(storage,'test',seed).records[0].title,'新修改');});
+test('cloud export format imports and roundtrips without losing user fields',()=>{const backup=JSON.stringify({version:1,records:seed});const imported=parseBackup(backup);const storage=memory();writeSnapshot(storage,'test',seed,imported,0);assert.deepEqual(readSnapshot(storage,'test',seed).records,seed);});
+test('malformed imports do not replace saved data',()=>{const storage=memory();writeSnapshot(storage,'test',seed,seed,0);for(const text of ['not json',JSON.stringify({version:2,records:seed}),JSON.stringify({version:1,records:[seed[0],seed[0]]}),JSON.stringify({version:1,records:[{...seed[0],status:'已完成'}]})])assert.throws(()=>parseBackup(text));assert.equal(readSnapshot(storage,'test',seed).revision,1);});
+test('unavailable or full storage surfaces error and preserves the last saved state',()=>{const storage=memory();writeSnapshot(storage,'test',seed,seed,0);const full={getItem:storage.getItem,setItem:()=>{throw Error('QuotaExceededError')}};assert.throws(()=>writeSnapshot(full,'test',seed,[{...seed[0],title:'不会丢失旧值'}],1),/Quota/);assert.deepEqual(readSnapshot(storage,'test',seed).records,seed);});
+test('corrupt existing state is not silently reset to initial records',()=>{const storage=memory();storage.setItem('test','broken');assert.throws(()=>readSnapshot(storage,'test',seed));assert.equal(storage.getItem('test'),'broken');});

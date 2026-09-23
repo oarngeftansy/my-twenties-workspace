@@ -11,3 +11,5 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
 .detail-body h3{font-size:18px;font-weight:650;margin:16px 0 8px;color:#574276}.detail-body h2{font-size:22px;margin:15px 0}.paragraph-gap{height:10px}.detail-body{white-space:normal}.detail-body p{white-space:pre-wrap}
+
+.local-storage-note{margin-top:28px;font-size:13px;color:#777082;background:#efedf5;padding:12px 15px;border-radius:7px}.heading-actions{flex-wrap:wrap}@media(max-width:767px){.heading-actions .backup-button{display:inline-flex!important}.page-heading{flex-wrap:wrap}.heading-actions{width:100%}.save-state{font-size:11px}}

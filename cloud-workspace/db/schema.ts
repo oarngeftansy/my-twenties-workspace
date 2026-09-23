@@ -1,0 +1,3 @@
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+export const workspaces=sqliteTable('workspaces',{id:text('id').primaryKey(),payload:text('payload').notNull(),revision:integer('revision').notNull().default(0),writeToken:text('write_token')});
+export const aiJobs=sqliteTable('ai_jobs',{id:text('id').primaryKey(),kind:text('kind').notNull(),recordId:text('record_id'),contentHash:text('content_hash'),snapshot:text('snapshot').notNull(),userText:text('user_text').notNull(),output:text('output').notNull().default(''),status:text('status').notNull().default('pending'),error:text('error').notNull().default(''),attempts:integer('attempts').notNull().default(0),createdAt:integer('created_at').notNull(),updatedAt:integer('updated_at').notNull()});

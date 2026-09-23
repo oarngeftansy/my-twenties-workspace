@@ -1,4 +1,13 @@
+import {useEffect,useRef,useState} from 'react';
 import {createRoot} from 'react-dom/client';
-import Workspace from '../app/workspace';
-import '../app/globals.css';
-createRoot(document.getElementById('root')!).render(<Workspace/>);
+import {parseBackup,type RecordItem} from '../lib/local-records';
+import './entry.css';
+const cloud='https://my-twenties-studio.neat-snow-9462.chatgpt.site';
+function App(){
+ const [records,setRecords]=useState<RecordItem[]|null>(null),[error,setError]=useState(''),[notice,setNotice]=useState('');const popup=useRef<Window|null>(null);
+ useEffect(()=>{try{const raw=localStorage.getItem('my-twenties-workspace:v1');if(raw)setRecords(parseBackup(raw))}catch(e){setError((e as Error).message)}},[]);
+ useEffect(()=>{const receive=(e:MessageEvent)=>{if(e.origin!==cloud||e.source!==popup.current||e.data?.type!=='twenties-cloud-ready'||!records)return;popup.current?.postMessage({type:'twenties-local-import',backup:{version:1,records}},cloud);setNotice('已发送到云端，请在新窗口确认合并。若没有出现合并窗口，请使用备份文件导入。')};window.addEventListener('message',receive);return()=>window.removeEventListener('message',receive)},[records]);
+ function backup(){const raw=localStorage.getItem('my-twenties-workspace:v1');if(!raw){setError('当前浏览器没有旧版记录。');return;}const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='我的20代生活-旧浏览器备份.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+ return <main><header><div className="mark">20<span>代</span></div><span>MY TWENTIES / DESIGN WORKSPACE</span><a href="https://github.com/oarngeftansy/my-twenties-workspace">GitHub 项目 ↗</a></header><section className="hero"><div className="eyebrow">你的项目，现在接着写。</div><h1>我的20代生活<span>.</span></h1><p>任务、灵感、机制、GDD，和陪你想清楚规则的橡皮鸭。<br/>在不同设备登录同一账号，继续同一份工作。</p><a className="primary" href={cloud}>进入云端工作台 <span>↗</span></a><small>使用创建此工作台的 ChatGPT 账号登录。GitHub 地址作为固定入口。</small></section><section className="features"><article><b>01</b><h2>跨设备接着写</h2><p>记录保存在云端。切回页面自动刷新，多设备同时编辑会提示版本冲突。</p></article><article><b>02</b><h2>Kimi 橡皮鸭</h2><p>结合项目资料讨论想法，追问规则缺口，保留对话。你来做最终决定。</p></article><article><b>03</b><h2>每次新建，自动审查</h2><p>新增和实质修改自动进入审查队列，结果保留在云端，失败可重试。</p></article></section><section className="migration"><div><span className="eyebrow">旧版资料迁移</span><h2>{records?`这台浏览器保留了 ${records.length} 条记录。`:'在旧浏览器里写过内容？'}</h2><p>请在原来使用的浏览器打开此页。先下载备份，再进入云端点击“导入备份”。合并前会提示新增及不同内容，旧浏览器数据不会删除。</p></div><div className="actions"><button onClick={backup}>下载旧浏览器备份 ↓</button>{records&&<button onClick={()=>{popup.current=window.open(cloud+'/?from=github','twenties-cloud');setNotice('请在打开的云端窗口登录并确认合并。若浏览器阻止传递，请下载备份后手动导入。')}}>打开云端并传递资料 ↗</button>}</div>{(error||notice)&&<p className="notice" role="status">{error||notice}</p>}</section><footer>我的20代生活 / 主策的个人工作台</footer></main>
+}
+createRoot(document.getElementById('root')!).render(<App/>);

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
     "target": "ES2017",
     "lib": [
       "dom",
@@ -27,7 +26,8 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+    "allowImportingTsExtensions": true
   },
   "include": [
     "next-env.d.ts",
@@ -38,7 +38,6 @@
     "**/*.mts"
   ],
   "exclude": [
-    "node_modules",
-    "cloud-workspace"
+    "node_modules"
   ]
 }

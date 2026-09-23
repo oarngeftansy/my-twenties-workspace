@@ -8,6 +8,8 @@ GitHub 固定入口：https://oarngeftansy.github.io/my-twenties-workspace/
 
 Kimi 的 `KIMI_API_KEY`、`KIMI_BASE_URL`、`KIMI_MODEL` 通过 Sites 服务端环境配置，密钥不放入网页和 Git。模型为 `kimi-k3`。新内容保存后尝试后台审查，打开工作台时继续处理持久队列；关闭页面期间未完成的请求会在回来后恢复。失败可以重试。每个内容版本去重，聊天提交使用幂等 ID，界面显示最近 300 条历史。
 
+对话可以从任务、灵感、机制与 GDD 中选择最多 8 条资料，也可把卡片拖到侧栏“橡皮鸭对话”入口，或在对话页的选择器内拖放。每次发送时把所选记录的当时内容保存为快照，历史对话显示关联记录，模型优先围绕这些资料回复。只选择资料也可以发起一次讨论。
+
 旧 GitHub 浏览器内容通过 JSON 备份导入；只合并记录，不删除云端独有记录。默认保留同编号云端版本，用户可以选择覆盖。历史 AI 备份只用于归档，不由导入恢复。
 
 开发：`npm ci`、`npm run dev`。构建：`npm run build`。类型检查：`npx tsc --noEmit`。核心验证：`node --experimental-strip-types --test tests/ai-core.test.ts`。数据库 schema 改变后运行 `npm run db:generate`；云端发布应用增量迁移。

@@ -1,0 +1,20 @@
+{
+  "name": "my-twenties-workspace",
+  "main": "./standalone/worker.mjs",
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS",
+    "run_worker_first": ["/*"]
+  },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "my-twenties-workspace",
+    "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+  }],
+  "vars": {
+    "KIMI_BASE_URL": "https://ws-pht7pri9ebffuga3.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+    "KIMI_MODEL": "kimi-k3"
+  }
+}

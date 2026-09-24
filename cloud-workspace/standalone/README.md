@@ -2,7 +2,7 @@
 
 This deployment replaces the owner-only Sites URL with a Cloudflare Workers URL. The GitHub Pages entry should be changed only after the independent Worker is live and its records, chat and Kimi call have been verified. Do not publish the Kimi key or the workspace password in this repository.
 
-The app uses the existing Vinext build (`npm run build`) and D1 schema. `standalone/worker.mjs` adds a password gate around the entire app, including API routes and static assets. A signed, HttpOnly, Secure cookie lasts 30 days. `standalone/auth.mjs` contains the password and session checks.
+The app uses the existing Vinext build (`npm run build`) and D1 schema. `standalone/worker.mjs` adds a password gate around the entire app, including API routes and static assets. Login attempts are limited per IP and globally through Cloudflare rate limit bindings. A signed, HttpOnly, Secure cookie lasts 30 days. `standalone/auth.mjs` contains the password and session checks.
 
 1. Sign in with `npx wrangler login` and create a D1 database named `my-twenties-workspace`.
 2. Copy `wrangler.standalone.template.jsonc` to the ignored `wrangler.standalone.jsonc` and replace the D1 ID. Keep the binding name `DB`.

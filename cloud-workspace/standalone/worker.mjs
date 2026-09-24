@@ -9,6 +9,9 @@ export default {async fetch(request,env,ctx){
  const url=new URL(request.url);
  if(!env.WORKSPACE_PASSWORD_HASH||!env.SESSION_SECRET)return new Response('Workspace login is not configured.',{status:503});
  if(url.pathname==='/login'&&request.method==='POST'){
+  const ip=request.headers.get('cf-connecting-ip')||'unknown';
+  const [perIp,global]=await Promise.all([env.LOGIN_LIMIT_PER_IP.limit({key:ip}),env.LOGIN_LIMIT_GLOBAL.limit({key:'workspace-login'})]);
+  if(!perIp.success||!global.success)return new Response('登录尝试过多，请一分钟后重试。',{status:429,headers:{'Retry-After':'60','Cache-Control':'no-store'}});
   const length=Number(request.headers.get('content-length')||0);if(length>1024)return new Response('Request too large.',{status:413});
   let password='';try{password=String((await request.formData()).get('password')||'')}catch{return html(true)}
   return await passwordMatches(password,env.WORKSPACE_PASSWORD_HASH)?redirect('/',await sessionCookie(env.SESSION_SECRET)):html(true);

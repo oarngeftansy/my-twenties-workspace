@@ -16,5 +16,6 @@ export default {async fetch(request,env,ctx){
  if(url.pathname==='/logout'&&request.method==='POST')return redirect('/login',clearedSessionCookie());
  if(!await hasSession(request,env.SESSION_SECRET))return url.pathname.startsWith('/api/')?Response.json({error:'login_required'},{status:401,headers:{'Cache-Control':'no-store'}}):url.pathname==='/login'?html():redirect('/login');
  if(url.pathname==='/login')return redirect('/');
+ if(url.pathname.startsWith('/_next/')||url.pathname.startsWith('/sources/')||url.pathname==='/favicon.svg')return env.ASSETS.fetch(request);
  return app.fetch(request,env,ctx);
 }};
